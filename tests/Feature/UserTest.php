@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -20,16 +22,29 @@ class UserTest extends TestCase
 
         $this->withoutExceptionHandling();
 
-//        $response = $this->getJson('/keda_interview-master/public/api/customer');
-        $response = $this->withHeaders([
-            'X-Requested-With' => 'XMLHttpRequest',
-            'Authorization' => 'Bearer 2|V0kjh7iDx7R8YFqONVdKgBv1T0ZXWODoTL4LewR7'
-        ])->get('/keda_interview-master/public/api/customer');
+        Sanctum::actingAs(
+            User::factory()->create(),
+            ['*']
+        );
 
+        $response = $this->json('GET','/api/customer');
         $response->assertStatus(200);
-//
-//        $response->assertStatus(200);
-//        $this->json('GET',route())
+
 
     }
+
+    //error
+//    public function test_createUser()
+//    {
+//        $this->seed('DatabaseSeeder');
+//
+//        $this->withoutExceptionHandling();
+//
+//        $response = $this->json('POST','/api/register',[
+//            'email' => 'testing@mail.com',
+//            'password' => 'dummydummy',
+//            'user_type_id' => 1
+//        ]);
+//        $response->assertStatus(200);
+//    }
 }
